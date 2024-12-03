@@ -11,6 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.myitschool.work.R
 import ru.myitschool.work.ui.login.LoginDestination
 import ru.myitschool.work.ui.login.LoginFragment
+
 import ru.myitschool.work.ui.qr.scan.QrScanDestination
 import ru.myitschool.work.ui.qr.scan.QrScanFragment
 
@@ -29,6 +30,7 @@ class RootActivity : AppCompatActivity() {
             navController.graph = navController.createGraph(
                 startDestination = LoginDestination
             ) {
+
                 fragment<LoginFragment, LoginDestination>()
                 fragment<QrScanFragment, QrScanDestination>()
             }
