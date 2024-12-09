@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
@@ -55,6 +56,13 @@ class QrScanFragment : Fragment(R.layout.fragment_qr_scan) {
             if (!isCameraInit && state is QrScanViewModel.State.Scan) {
                 startCamera()
                 isCameraInit = true
+            }
+            binding.close.setOnClickListener {
+                val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                val navController = navHostFragment.navController
+
+// Navigate using the IDs you defined in your Nav Graph
+                navController.navigate(R.id.go_back_to_main)
             }
         }
 

@@ -46,7 +46,6 @@ dependencies {
 
     implementation(Dependencies.AndroidX.Navigation.fragment)
     implementation(Dependencies.AndroidX.Navigation.navigationUi)
-
     implementation(Dependencies.Retrofit.library)
     implementation(Dependencies.Retrofit.gsonConverter)
 
@@ -65,6 +64,8 @@ dependencies {
     val hilt = "2.51.1"
     implementation("com.google.dagger:hilt-android:$hilt")
     kapt("com.google.dagger:hilt-android-compiler:$hilt")
+
+
 }
 
 kapt {

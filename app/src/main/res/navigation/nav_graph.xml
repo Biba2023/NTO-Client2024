@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/login">
+    <action android:id="@+id/action_pop_out_of_game"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
+
+    <fragment
+        android:id="@+id/login"
+        android:name="ru.myitschool.work.ui.login.LoginFragment"
+        tools:layout="@layout/fragment_login"
+        android:label="Profile">
+
+
+        <action
+            android:id="@+id/go_to_main_screen"
+            app:destination="@id/main_screen"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/nav_graph"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/main_screen"
+        tools:layout="@layout/fragment_main_screen"
+        android:name="ru.myitschool.work.ui.main_screen.MainScreenFragment"
+        android:label="Main Screen" >
+        <action
+            android:id="@+id/go_to_qr"
+            app:destination="@id/qr_scan"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/nav_graph"/>
+        <action
+            android:id="@+id/go_to_login"
+            app:destination="@id/login"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/nav_graph"/>
+    </fragment>
+    <fragment
+        android:id="@+id/qr_scan"
+        tools:layout="@layout/fragment_qr_scan"
+        android:name="ru.myitschool.work.ui.qr.scan.QrScanFragment"
+        android:label="QR Scan">
+        <action
+            android:id="@+id/go_back_to_main"
+            app:destination="@id/main_screen"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/nav_graph"/>
+    </fragment>
+
+
+</navigation>

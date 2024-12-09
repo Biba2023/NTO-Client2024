@@ -8,6 +8,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.myitschool.work.R
 import ru.myitschool.work.databinding.FragmentLoginBinding
@@ -35,11 +37,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             val hasLogIn = sp.getBoolean("hasLogIn", false)
 
             if (hasLogIn) {
-                val fragment = QrScanFragment()
-                val fm = requireActivity().supportFragmentManager
-                val ft = fm.beginTransaction()
-                ft.replace(R.id.fragment_login, fragment)
-                ft.commit()
+                val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                val navController = navHostFragment.navController
+
+// Navigate using the IDs you defined in your Nav Graph
+                navController.navigate(R.id.go_to_main_screen)
             } else {
                 binding.error.visibility = View.GONE
                 binding.login.isEnabled = false
@@ -80,6 +82,16 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     val e = sp.edit()
                     e.putBoolean("hasLogIn", true)
                     e.apply()
+
+
+                    val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                    val navController = navHostFragment.navController
+
+// Navigate using the IDs you defined in your Nav Graph
+                    navController.navigate(R.id.go_to_main_screen)
+
+
+
                     //ниже код, который меняет фрагмент
                     /*val fragment = MainScreenFragment()
                     val fm = requireActivity().supportFragmentManager
