@@ -4,19 +4,24 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import ru.myitschool.work.R
 import ru.myitschool.work.databinding.FragmentLoginBinding
-import ru.myitschool.work.ui.main_screen.MainScreenFragment
-import ru.myitschool.work.ui.qr.scan.QrScanFragment
-
 import ru.myitschool.work.utils.collectWhenStarted
+import java.io.IOException
 
 @AndroidEntryPoint
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -39,8 +44,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             if (hasLogIn) {
                 val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
                 val navController = navHostFragment.navController
-
-// Navigate using the IDs you defined in your Nav Graph
                 navController.navigate(R.id.go_to_main_screen)
             } else {
                 binding.error.visibility = View.GONE
@@ -64,6 +67,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     }
 
                     override fun afterTextChanged(s: Editable?) {
+                        binding.error.visibility = View.GONE
                         val str = s.toString()
                         val p = Regex("[^A-Za-z0-9 ]", RegexOption.IGNORE_CASE)
                         val b = p.containsMatchIn(str)
@@ -77,32 +81,54 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     }
                 })
                 binding.login.setOnClickListener {
-                    val sp =
-                        requireActivity().getSharedPreferences("hasLogIn", Context.MODE_PRIVATE)
-                    val e = sp.edit()
-                    e.putBoolean("hasLogIn", true)
-                    e.apply()
+                    binding.error.visibility = View.GONE
+                    val client = OkHttpClient()
+                    val request = Request.Builder()
+                        .url("http://10.0.2.2:9000/api/${binding.username.text}/auth")
+                        .build()
 
+                    client.newCall(request).enqueue(object : Callback {
+                        override fun onFailure(call: Call, e: IOException) {
+                            e.printStackTrace()
+                        }
 
-                    val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-                    val navController = navHostFragment.navController
+                        override fun onResponse(call: Call, response: Response) {
+                            Log.d("biba",response.code().toString())
+                            when(response.code()){
+                                200 -> {
+                                    //Успешно
+                                    val sp =
+                                        requireActivity().getSharedPreferences("hasLogIn", Context.MODE_PRIVATE)
+                                    val e = sp.edit()
+                                    e.putBoolean("hasLogIn", true)
+                                    e.apply()
+                                    val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                                    val navController = navHostFragment.navController
+                                    navController.navigate(R.id.go_to_main_screen)
 
-// Navigate using the IDs you defined in your Nav Graph
-                    navController.navigate(R.id.go_to_main_screen)
+                                }
+                                401 -> {
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        binding.error.visibility = View.VISIBLE
+                                    }
+                                }
+                            }
+                        }
+                    })
 
-
-
-                    //ниже код, который меняет фрагмент
-                    /*val fragment = MainScreenFragment()
-                    val fm = requireActivity().supportFragmentManager
-                    val ft = fm.beginTransaction()
-                    //ft.replace(R.id.fragment_login, fragment)
-                    ft.commit()*/
                 }
             }
             }
 
     }
+    /*val sp =
+        requireActivity().getSharedPreferences("hasLogIn", Context.MODE_PRIVATE)
+    val e = sp.edit()
+    e.putBoolean("hasLogIn", true)
+    e.apply()
+    val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+    val navController = navHostFragment.navController
+    navController.navigate(R.id.go_to_main_screen)*/
 
     override fun onDestroyView() {
         _binding = null

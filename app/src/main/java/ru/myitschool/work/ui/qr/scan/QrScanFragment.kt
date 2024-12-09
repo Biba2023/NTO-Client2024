@@ -60,8 +60,6 @@ class QrScanFragment : Fragment(R.layout.fragment_qr_scan) {
             binding.close.setOnClickListener {
                 val navHostFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
                 val navController = navHostFragment.navController
-
-// Navigate using the IDs you defined in your Nav Graph
                 navController.navigate(R.id.go_back_to_main)
             }
         }
